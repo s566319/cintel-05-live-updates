@@ -58,7 +58,7 @@ def get_mtcars_server_functions(input, output, session):
     # Initialize the values on startup
 
     reactive_location = reactive.Value("ELY MN")
-    reactive_stock = reactive.Value("HubSpot")
+    reactive_stock = reactive.Value("Marvell Technology")
 
     # Previously, we had a single reactive dataframe to hold filtered results
     reactive_df = reactive.Value()
@@ -198,6 +198,7 @@ def get_mtcars_server_functions(input, output, session):
         )
         plotly_express_plot.update_layout(title="Continuous Temperature (F)")
         return plotly_express_plot
+    
 
     ##############################
     #Continuous Stock Updates#
@@ -224,7 +225,7 @@ def get_mtcars_server_functions(input, output, session):
     @render.text
 
     def mtcars_stock_string():
-        logger.info("mtcars_price_stocks_string starting")
+        logger.info("mtcars_stock_string starting")
         selected = reactive_stock.get()
         line1 = f"Current stock price for {selected}."
         line2 = "Updated once per minute for 15 minutes."
@@ -255,7 +256,8 @@ def get_mtcars_server_functions(input, output, session):
             stock_df, x="Time", y="Price", color="Company", markers=True
         )
         plotly_express_plot.update_layout(title="Continuous Price (USD)")
-        return plotly_express_plot    
+        return plotly_express_plot
+    
 
     ###############################################################
 

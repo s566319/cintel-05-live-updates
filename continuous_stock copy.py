@@ -78,7 +78,7 @@ async def update_csv_stock():
         "Airbus SE",
         "Target Corporation",
         "Marvell Technology",
-        "HubSpot"
+        "HubSpot",
         ]
 
         update_interval = 60  # Update every 1 minute (60 seconds)
