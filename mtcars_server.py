@@ -225,7 +225,7 @@ def get_mtcars_server_functions(input, output, session):
     @render.text
 
     def mtcars_stock_string():
-        logger.info("mtcars_price_stocks_string starting")
+        logger.info("mtcars_stock_string starting")
         selected = reactive_stock.get()
         line1 = f"Current stock price for {selected}."
         line2 = "Updated once per minute for 15 minutes."
