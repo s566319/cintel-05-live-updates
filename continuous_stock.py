@@ -27,10 +27,10 @@ We usually include a .env-example file to illustrate the format.
 import asyncio
 import os
 import pandas as pd
-from random import randint
 import yfinance as yf
 from collections import deque
 from datetime import datetime
+from random import randint
 from pathlib import Path
 from fetch import fetch_from_url
 from util_logger import setup_logger
@@ -60,6 +60,7 @@ async def get_stock_price(ticker):
     # stock = yf.Ticker(ticker) # Get the stock data
     # price = stock.history(period="1d").tail(1)["Close"][0] # Get the closing price
     price = yf_results.data["optionChain"]["result"][0]["quote"]["regularMarketPrice"]
+    price = randint(132, 148)
     return price
 
 def init_csv_file(file_path):
