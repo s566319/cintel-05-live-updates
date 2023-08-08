@@ -27,6 +27,17 @@ def get_mtcars_inputs():
             choices=["ELY MN", "Death Valley CA", "Maryville MO"],
             selected="ELY MN",
         ),
+        ui.input_select(
+            id = "MTCARS_STOCK_SELECT",
+            label = "Choose a stock",
+            choices = ["Spirit Aerosystems Holdings, Inc.",
+                       "The Boeing Company",
+                       "Airbus SE",
+                       "Target Corporation",
+                       "Marvell Technology",
+                       "HubSpot"],
+            selected = "Spirit Aerosystems Holdings, Inc.",
+        ),
         ui.tags.hr(),
         ui.tags.section(
             ui.h3("MT Cars Table"),
