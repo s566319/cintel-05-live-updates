@@ -18,6 +18,7 @@ import shinyswatch          # pip install shinyswatch
 
 # Finally, import what we need from other local code files.
 from continuous_location import update_csv_location
+from continuous_stock import update_csv_stock
 from mtcars_server import get_mtcars_server_functions
 from mtcars_ui_inputs import get_mtcars_inputs
 from mtcars_ui_outputs import get_mtcars_outputs
@@ -34,7 +35,9 @@ async def update_csv_files():
     while True:
         logger.info("Calling continuous updates ...")
         task1 = asyncio.create_task(update_csv_location())
+        task2 = asyncio.create_task(update_csv_stock())
         await asyncio.gather(task1)
+        await asyncio.gather(task2)
         await asyncio.sleep(60)  # wait for 60 seconds
 
 app_ui = ui.page_navbar(
@@ -46,20 +49,16 @@ app_ui = ui.page_navbar(
             get_mtcars_outputs(),
         ),
     ),
-    ui.nav(ui.a("About", href="https://github.com/denisecase")),
-    ui.nav(ui.a("GitHub", href="https://github.com/denisecase/cintel-05-live-updates")),
-    ui.nav(ui.a("App", href="https://denisecase.shinyapps.io/cintel-05-live-updates/")),
+    ui.nav(ui.a("About", href="https://github.com/s566319")),
+    ui.nav(ui.a("GitHub", href="https://github.com/s566319/cintel-05-live-updates")),
+    ui.nav(ui.a("App", href="https://s566319ingamiller.shinyapps.io/cintel-05-live-updates/")),
     ui.nav(ui.a("Plotly Express", href="https://plotly.com/python/line-and-scatter/")),
     ui.nav(ui.a("WeatherAPI", href="https://openweathermap.org/api")),
     ui.nav(ui.a("OneCallAPI", href="https://openweathermap.org/api/one-call-3")),
+
     ui.nav(ui.a("File_Reader", href="https://shiny.rstudio.com/py/api/reactive.file_reader.html")),
-    title=ui.h1("Case Dashboard"),
+    title=ui.h1("Miller Dashboard"),
 )
-
-
-
-
-
 
 def server(input, output, session):
     """Define functions to create UI outputs."""
