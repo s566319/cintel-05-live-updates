@@ -36,7 +36,7 @@ def get_mtcars_inputs():
                        "Target Corporation",
                        "Marvell Technology",
                        "HubSpot"],
-            selected = "Spirit Aerosystems Holdings, Inc.",
+            selected = "Marvell Technology",
         ),
         ui.tags.hr(),
         ui.tags.section(
