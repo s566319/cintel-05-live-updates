@@ -59,11 +59,6 @@ app_ui = ui.page_navbar(
     title=ui.h1("Miller Dashboard"),
 )
 
-
-
-
-
-
 def server(input, output, session):
     """Define functions to create UI outputs."""
     logger.info("Starting server ...")
