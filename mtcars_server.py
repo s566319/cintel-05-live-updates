@@ -60,9 +60,6 @@ def get_mtcars_server_functions(input, output, session):
     reactive_location = reactive.Value("ELY MN")
 
     # Previously, we had a single reactive dataframe to hold filtered results
-    reactive_stock = reactive.Value("Marvell Technology")
-    reactive_stock_df = reactive.Value()
-
     reactive_df = reactive.Value()
 
     # We also provided shared variables to hold the original dataframe and its count
@@ -202,79 +199,6 @@ def get_mtcars_server_functions(input, output, session):
         return plotly_express_plot
 
     ###############################################################
-    # CONTINUOUS STOCK UPDATES 
-    # ###############################################################
-
-    @reactive.Effect
-    @reactive.event(input.MTCARS_STOCK_SELECT)
-    def _():
-        """Set two reactive values (the location and temps df) when user changes location"""
-        reactive_stock.set(input.MTCARS_STOCK_SELECT())
-        # init_mtcars_stock_csv()
-        df = get_mtcars_stock_df()
-        logger.info(f"init reactive_price_df len: {len(df)}")
-
-    @reactive.file_reader(str(csv_stocks))
-    def get_mtcars_stock_df():
-        """Return mtcars stocks pandas Dataframe."""
-        logger.info(f"READING df from {csv_stocks}")
-        df = pd.read_csv(csv_stocks)
-        logger.info(f"READING df len {len(df)}")
-        return df
-
-    @output
-    @render.text
-    def mtcars_stocks_string():
-        """Return a string based on selected stock."""
-        logger.info("mtcars_price_stocks_string starting")
-        selected = reactive_stock.get()
-        line1 = f"Recent Price in USD for {selected}."
-        line2 = "Updated once per minute for 15 minutes."
-        line3 = "Keeps the most recent 10 minutes of data."
-        message = f"{line1}\n{line2}\n{line3}"
-        logger.info(f"{message}")
-        return message
-    
-    @output
-    @render.text
-    def mtcars_stocks_high():
-        """Return a string based on selected stock."""
-        logger.info("mtcars_price_stocks_daily_high starting")
-        selected = reactive_stock.get()
-        df = get_mtcars_stock_df()
-        logger.info(f"READING df len {len(df)}")
-        df_stocks = df[df["Company"] == reactive_stock.get()]
-        logger.info(f"Rendering Price table with {len(df_stocks)} rows")
-        df_stocks_high = df_stocks["Price"].max()
-        logger.info(f"READING df_stocks_high {df_stocks_high}")
-        message = f"The daily high for {selected} is {df_stocks_high}."
-        logger.info(f"{message}")
-    
-        return message
-
-    @output
-    @render.table
-    def mtcars_stocks_table():
-        df = get_mtcars_stock_df()
-        # Filter the data based on the selected ticker
-        df_stocks = df[df["Company"] == reactive_stock.get()]
-        logger.info(f"Rendering Price table with {len(df_stocks)} rows")
-        return df_stocks
-
-    @output
-    @render_widget
-    def mtcars_stock_chart():
-        df = get_mtcars_stock_df()
-        # Filter the data based on the selected Stock
-        df_stocks = df[df["Company"] == reactive_stock.get()]
-        logger.info(f"Rendering Price chart with {len(df_stocks)} points")
-        plotly_express_plot = px.line(
-            df_stocks, x="Time", y="Price", color="Company", markers=True
-        )
-        plotly_express_plot.update_layout(title="Continuous Price (USD)")
-        return plotly_express_plot
-    
-    ###############################################################
 
     # return a list of function names for use in reactive outputs
     # Includes our 2 new selection strings and 2 new output widgets
@@ -288,10 +212,6 @@ def get_mtcars_server_functions(input, output, session):
         mtcars_location_string,
         mtcars_location_table,
         mtcars_location_chart,
-        mtcars_stocks_string,
-        mtcars_stocks_high,
-        mtcars_stocks_table,
-        mtcars_stock_chart,
     ]
 
 
