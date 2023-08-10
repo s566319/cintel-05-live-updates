@@ -223,7 +223,8 @@ def get_mtcars_server_functions(input, output, session):
     @output
     @render.text
     def mtcars_stock_string():
-        logger.info("mtcars_stock_string starting")
+        """Return a string based on selected company."""
+        logger.info("mtcars_price_company_string starting")
         selected = reactive_stock.get()
         line1 = f"Current stock price for {selected}."
         line2 = "Updated once per minute for 15 minutes."
@@ -233,13 +234,26 @@ def get_mtcars_server_functions(input, output, session):
         return new_message
 
     @output
+    @render.text
+    def mtcars_stock_difference():
+        selected = reactive_stock.get()
+        df = get_mtcars_stock_df()
+        df_company = df[df['Company'] == reactive_stock.get()]
+        prev_price = df_company['Previous_Price'].iloc[-1]
+        current_price = df_company['Price'].iloc[-1]
+        logger.info(f'Calculating daily price difference for{selected}')
+        price_difference = (round(current_price - prev_price, 2))
+        return price_difference
+
+
+    @output
     @render.table
     def mtcars_stock_table():
         df = get_mtcars_stock_df()
-        # Filter the table based off of the selected stock
-        stock_df = df[df["Company"] == reactive_stock.get()]
-        logger.info(f"Rendering Price table with {len(stock_df)} rows")
-        return stock_df
+        # Filter the data based on the selected location
+        df_company = df[df["Company"] == reactive_stock.get()]
+        logger.info(f"Rendering PRICE table with {len(df_company)} rows")
+        return df_company
 
     @output
     @render_widget
@@ -270,6 +284,7 @@ def get_mtcars_server_functions(input, output, session):
         mtcars_location_table,
         mtcars_location_chart,
         mtcars_stock_string,
+        mtcars_stock_difference,
         mtcars_stock_table,
         mtcars_stock_chart,
     ]

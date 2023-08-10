@@ -61,24 +61,23 @@ async def get_stock_price(ticker):
     # price = randint(60, 190)  # This is a random number generator for testing
     return price
 
-# Get Daily High
-async def get_daily_high(ticker):
-    logger.info("Calling get_daily_high for {ticker}")
-    stock_api_url = f"https://query1.finance.yahoo.com/v7/finance/options/{ticker}"
-    logger.info(f"Calling fetch_from_url: {stock_api_url}")
-    result = await fetch_from_url(stock_api_url, "json")
-    logger.info(f"Data from yahoofinance: {result}")
-    daily_high = result.data["optionChain"]["result"][0]["quote"]["regularMarketDayHigh"]
-    return daily_high
+# Takes ticker string and returns previous day's closing price (asynchronous)
+async def get_previous_month_price(ticker):
+    logger.info(f'Calling get_previous_month_price for {ticker}')
+    month_api_url = f'https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?&interval=1d&range=1d'
+    logger.info(f'Calling fetch_from_url for {month_api_url}')
+    result = await fetch_from_url(month_api_url, "json")
+    logger.info(f'Data from yahoofinance: {result}')
+    prev_price = result.data['chart']['result'][0]['meta']['chartPreviousClose']
+    return prev_price
 
-def init_csv_file(file_path):
-    df_empty = pd.DataFrame(
-        columns=["Company", "Ticker", "Time", "Stock_Price"]
-    )
+def init_stock_csv_file(file_path):
+    df_empty = pd.DataFrame(columns=["Company", "Ticker", "Time", "Price", 'Previous_Price'])
     df_empty.to_csv(file_path, index=False)
 
+
+"""Update the CSV file with the latest location information."""
 async def update_csv_stock():
-    """Update the CSV file with the latest location information."""
     logger.info("Calling update_csv_stock")
     try:
         companies = [
@@ -89,7 +88,6 @@ async def update_csv_stock():
         "Marvell Technology",
         "HubSpot"
         ]
-
         update_interval = 60  # Update every 1 minute (60 seconds)
         total_runtime = 15 * 60  # Total runtime maximum of 15 minutes
         num_updates = 10  # Keep the most recent 10 readings
@@ -104,20 +102,21 @@ async def update_csv_stock():
 
         # Check if the file exists, if not, create it with only the column headings
         if not os.path.exists(fp):
-            init_csv_file(fp)
+            init_stock_csv_file(fp)
 
-        logger.info(f"Initialized csv file at {fp}")
-
+       
         for _ in range(num_updates):  # To get num_updates readings
             for company in companies:
                 ticker = lookup_ticker(company)
                 new_price = await get_stock_price(ticker)
+                prev_price = await get_previous_month_price(ticker)
                 time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Current time
                 new_record = {
                     "Company": company,
                     "Ticker": ticker,
                     "Time": time_now,
                     "Price": new_price,
+                    "Previous_Price": prev_price
                 }
                 records_deque.append(new_record)
 
