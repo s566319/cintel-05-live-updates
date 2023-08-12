@@ -30,8 +30,8 @@ def get_mtcars_inputs():
         ui.input_select(
             id = "MTCARS_STOCK_SELECT",
             label = "Choose a stock",
-            choices = ["Tesla Inc", "General Motors Company", "Toyota Motor Corporation", "Ford Motor Company", "Honda Motor Co", "GameStop Corp"],
-            selected = "Tesla Inc",
+            choices = ["Spirit AeroSystems Holdings, Inc", "The Boeing Company", "Target Corp", "The Direxion Moonshoot"],
+            selected = "Spirit AeroSystems Holdings, Inc",
         ),
         ui.tags.hr(),
         ui.tags.section(
