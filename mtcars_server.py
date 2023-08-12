@@ -22,7 +22,7 @@ and can only be used within that specific function or block.
 ------------------------------------
 Important Concept - Reactivity
 ------------------------------
-Reactive Effects only have "side effects" (they set reactive values, but don't return anything directly).
+Reactive Effects only have side effects"" (they set reactive values, but don't return anything directly)."
 Reactive Calcs return a value (they can also set reactive values).
 If a reactive.Effect depends on inputs, you must add them using the
 reactive.event decorator (otherwise, the function won't be triggered).
@@ -58,7 +58,7 @@ def get_mtcars_server_functions(input, output, session):
     # Initialize the values on startup
 
     reactive_location = reactive.Value("ELY MN")
-    reactive_stock = reactive.Value("Marvell Technology")
+    reactive_stock = reactive.Value("Tesla Inc")
 
     # Previously, we had a single reactive dataframe to hold filtered results
     reactive_df = reactive.Value()
@@ -198,11 +198,10 @@ def get_mtcars_server_functions(input, output, session):
         )
         plotly_express_plot.update_layout(title="Continuous Temperature (F)")
         return plotly_express_plot
-    
 
-    ##############################
-    #Continuous Stock Updates#
-    ##############################
+##############################
+#Continuous Stock Update Code#
+##############################
 
     @reactive.Effect
     @reactive.event(input.MTCARS_STOCK_SELECT)
@@ -214,6 +213,7 @@ def get_mtcars_server_functions(input, output, session):
         logger.info(f"init reactive_price_df len: {len(df)}")
 
     @reactive.file_reader(str(csv_stocks))
+
     def get_mtcars_stock_df():
         logger.info(f"READING df from {csv_stocks}")
         df = pd.read_csv(csv_stocks)
@@ -222,9 +222,9 @@ def get_mtcars_server_functions(input, output, session):
 
     @output
     @render.text
+
     def mtcars_stock_string():
-        """Return a string based on selected company."""
-        logger.info("mtcars_price_company_string starting")
+        logger.info("mtcars_price_stocks_string starting")
         selected = reactive_stock.get()
         line1 = f"Current stock price for {selected}."
         line2 = "Updated once per minute for 15 minutes."
@@ -234,29 +234,18 @@ def get_mtcars_server_functions(input, output, session):
         return new_message
 
     @output
-    @render.text
-    def mtcars_stock_difference():
-        selected = reactive_stock.get()
-        df = get_mtcars_stock_df()
-        df_company = df[df['Company'] == reactive_stock.get()]
-        prev_price = df_company['Previous_Price'].iloc[-1]
-        current_price = df_company['Price'].iloc[-1]
-        logger.info(f'Calculating daily price difference for{selected}')
-        price_difference = (round(current_price - prev_price, 2))
-        return price_difference
-
-
-    @output
     @render.table
+
     def mtcars_stock_table():
         df = get_mtcars_stock_df()
-        # Filter the data based on the selected location
-        df_company = df[df["Company"] == reactive_stock.get()]
-        logger.info(f"Rendering PRICE table with {len(df_company)} rows")
-        return df_company
+        # Filter the table based off of the selected stock
+        stock_df = df[df["Company"] == reactive_stock.get()]
+        logger.info(f"Rendering Price table with {len(stock_df)} rows")
+        return stock_df
 
     @output
     @render_widget
+
     def mtcars_stock_chart():
         df = get_mtcars_stock_df()
         # Filter the data based off of the selected stock
@@ -266,8 +255,7 @@ def get_mtcars_server_functions(input, output, session):
             stock_df, x="Time", y="Price", color="Company", markers=True
         )
         plotly_express_plot.update_layout(title="Continuous Price (USD)")
-        return plotly_express_plot
-    
+        return plotly_express_plot    
 
     ###############################################################
 
@@ -284,7 +272,6 @@ def get_mtcars_server_functions(input, output, session):
         mtcars_location_table,
         mtcars_location_chart,
         mtcars_stock_string,
-        mtcars_stock_difference,
         mtcars_stock_table,
         mtcars_stock_chart,
     ]
